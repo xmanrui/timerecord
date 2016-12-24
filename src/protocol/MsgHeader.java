@@ -8,6 +8,7 @@ import static protocol.Tool.IntToByte;
 import static protocol.Tool.AddBytesToArrList;
 import static protocol.Tool.AddLowByteToArrList;
 import static protocol.Tool.AddHighAndLowByteToArrList;
+import static protocol.Tool.PackageByteList;
 
 public final class MsgHeader {
     private static int SUBPACKAGE_FLAG_BIT_INDEX = 13;
@@ -99,14 +100,7 @@ public final class MsgHeader {
 
     public byte[] GetMsgHeaderPackage()
     {
-        byte[] packgeBytes = new byte[msgHeaderByteList.size()];
-
-        for(int i=0; i<msgHeaderByteList.size(); i++)
-        {
-            packgeBytes[i] = (byte)msgHeaderByteList.get(i);
-        }
-
-        return packgeBytes;
+        return PackageByteList(msgHeaderByteList);
     }
 
 }

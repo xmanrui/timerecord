@@ -80,5 +80,17 @@ public class Tool {
         AddBytesToArrList(highByteArr, list);
         AddBytesToArrList(lowByteArr, list);
     }
+
+    public static byte[] PackageByteList(ArrayList list)
+    {
+        byte[] packgeBytes = new byte[list.size()];
+
+        for(int i=0; i<list.size(); i++)
+        {
+            packgeBytes[i] = (byte)list.get(i);
+        }
+
+        return packgeBytes;
+    }
 }
 
