@@ -85,6 +85,7 @@ public final class MsgHeader {
 
     public void MakeMsgHeaderByteList()
     {
+        msgHeaderByteList.clear();
         AddLowByteToArrList(protocolVersion, msgHeaderByteList);
         AddHighAndLowByteToArrList(msgID, msgHeaderByteList);
         AddHighAndLowByteToArrList(msgBodyProperty, msgHeaderByteList);
