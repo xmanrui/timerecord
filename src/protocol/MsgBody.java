@@ -1,10 +1,6 @@
 package protocol;
 
 import java.util.ArrayList;
-import static protocol.Tool.ChangeByte;
-import static protocol.Tool.IntEnum;
-import static protocol.Tool.IntToByte;
-import static protocol.Tool.AddBytesToArrList;
 import static protocol.Tool.AddLowByteToArrList;
 import static protocol.Tool.AddHighAndLowByteToArrList;
 import static protocol.Tool.PackageByteList;
