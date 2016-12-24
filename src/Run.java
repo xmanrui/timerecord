@@ -11,7 +11,7 @@ public class Run {
         System.out.println(b);
 
         ArrayList lt = new ArrayList();
-        for (int i=0; i<16; i++)
+        for (int i=0; i<17; i++)
         {
             byte t = (byte)i;
             lt.add(t);
@@ -22,5 +22,7 @@ public class Run {
             byte aaa= (byte)lt.get(i);
             System.out.println(aaa);
         }
+
     }
 }
+
