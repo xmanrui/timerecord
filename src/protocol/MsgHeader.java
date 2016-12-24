@@ -2,18 +2,16 @@ package protocol;
 
 import java.util.ArrayList;
 
+import static protocol.Tool.ChangeByte;
+import static protocol.Tool.IntEnum;
+import static protocol.Tool.IntToByte;
+import static protocol.Tool.AddBytesToArrList;
+import static protocol.Tool.AddLowByteToArrList;
+import static protocol.Tool.AddHighAndLowByteToArrList;
 
 public final class MsgHeader {
-    enum IntEnum{
-            HIGH_8BIT,
-            LOW_8BIT,
-    }
     private static int SUBPACKAGE_FLAG_BIT_INDEX = 13;
     private static int PHONENUM_LEN = 16;
-    private static byte VALUE_0X7E = 0x7e;
-    private static byte VALUE_0X7D = 0x7d;
-    private static byte VALUE_0X02 = 0x02;
-    private static byte VALUE_0X01 = 0x01;
 
     public int protocolVersion = 0;
     public int msgID = 0;
@@ -25,6 +23,14 @@ public final class MsgHeader {
     public int packageIndex = 0;
 
     public ArrayList msgHeaderByteList = new ArrayList();
+
+    public MsgHeader(int msgID){
+        this.msgID = msgID;
+        for(int i=0; i<phoneNum.length; i++)
+        {
+            phoneNum[i] = 0;
+        }
+    }
 
     public void MakeMsgBodyProperty(int subpackageFlag, int encryptType, int msgBodyLenght)
     {
@@ -47,73 +53,6 @@ public final class MsgHeader {
         return flag;
     }
 
-    private byte IntToByte(int value, IntEnum em)
-    {
-        byte byteValue = 0;
-
-        if(em == IntEnum.LOW_8BIT)
-        {
-            byteValue = (byte)(value & 0xFF);
-        }
-        else if (em == IntEnum.HIGH_8BIT)
-        {
-            byteValue = (byte)((value >> 8) & 0xFF);
-        }
-
-        return byteValue;
-    }
-
-    private byte[] ChangeByte(byte value)
-    {
-        byte[] afterChanged;
-
-        if (value == VALUE_0X7E)
-        {
-            afterChanged = new byte[2];
-            afterChanged[0] = VALUE_0X7E;
-            afterChanged[1] = VALUE_0X02;
-        }
-        else if (value == VALUE_0X7D)
-        {
-            afterChanged = new byte[2];
-            afterChanged[0] = VALUE_0X7D;
-            afterChanged[1] = VALUE_0X01;
-        }
-        else
-        {
-            afterChanged = new byte[1];
-            afterChanged[0] = value;
-        }
-
-        return afterChanged;
-    }
-    private void AddBytesToArrList(byte[] byteArr)
-    {
-        for ( byte i: byteArr)
-        {
-            msgHeaderByteList.add(i);
-        }
-    }
-
-    private void AddLowByteToArrList(int value)
-    {
-        byte lowBytes = IntToByte(value, IntEnum.LOW_8BIT);
-        byte[] afterChanged = ChangeByte(lowBytes);
-        AddBytesToArrList(afterChanged);
-    }
-
-    // 高字节放前面，低字节放后面
-    private void AddHighAndLowByteToArrList(int value)
-    {
-        byte highByte = IntToByte(value, IntEnum.HIGH_8BIT);
-        byte lowByte = IntToByte(value, IntEnum.LOW_8BIT);
-        byte[] highByteArr = ChangeByte(highByte);
-        byte[] lowByteArr = ChangeByte(lowByte);
-
-        AddBytesToArrList(highByteArr);
-        AddBytesToArrList(lowByteArr);
-    }
-
     // numTwo放在高4位
     private byte ChangeTwoPhoneNumToAByte(int numOne, int numTwo)
     {
@@ -125,7 +64,7 @@ public final class MsgHeader {
         return afterMerged;
     }
 
-    private void AddPhoneNumToArrList()
+    private void AddPhoneNumToArrList(ArrayList list)
     {
         byte byteValue = 0;
         byte[] afterChanged;
@@ -133,28 +72,28 @@ public final class MsgHeader {
         {
             byteValue = ChangeTwoPhoneNumToAByte(phoneNum[i], phoneNum[i+1]);
             afterChanged = ChangeByte(byteValue);
-            AddBytesToArrList(afterChanged);
+            AddBytesToArrList(afterChanged, list);
         }
     }
 
-    private void AddMsgHeaderEndToArrList()
+    private void AddMsgHeaderEndToArrList(ArrayList list)
     {
-        AddHighAndLowByteToArrList(packetCount);
-        AddHighAndLowByteToArrList(packageIndex);
+        AddHighAndLowByteToArrList(packetCount, list);
+        AddHighAndLowByteToArrList(packageIndex, list);
     }
 
     public void MakeMsgHeaderByteList()
     {
-        AddLowByteToArrList(protocolVersion);
-        AddHighAndLowByteToArrList(msgID);
-        AddHighAndLowByteToArrList(msgBodyProperty);
-        AddPhoneNumToArrList();
-        AddHighAndLowByteToArrList(msgIndex);
-        AddHighAndLowByteToArrList(reserved);
+        AddLowByteToArrList(protocolVersion, msgHeaderByteList);
+        AddHighAndLowByteToArrList(msgID, msgHeaderByteList);
+        AddHighAndLowByteToArrList(msgBodyProperty, msgHeaderByteList);
+        AddPhoneNumToArrList(msgHeaderByteList);
+        AddHighAndLowByteToArrList(msgIndex, msgHeaderByteList);
+        AddHighAndLowByteToArrList(reserved, msgHeaderByteList);
 
         if(IsLongMsg())
         {
-            AddMsgHeaderEndToArrList();
+            AddMsgHeaderEndToArrList(msgHeaderByteList);
         }
     }
 
