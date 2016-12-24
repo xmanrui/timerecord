@@ -1,24 +1,21 @@
 package protocol;
 
-/**
- * Created by pc on 2016/12/23.
- */
+import static protocol.Tool.ChangeByte;
+
 public final class CheckCode {
-    public byte MakeCheckedCode(byte[] byteArr)
+    public byte[] MakeCheckedCode(byte[] msgHeader, byte[] msgBody)
     {
-        byte afterChecked = 0;
-        if(byteArr.length == 0)
+        byte temp = msgHeader[0];
+
+        for(int i=1; i < msgHeader.length-1; i++)
         {
-            return afterChecked;
+            temp ^= msgHeader[i];
         }
 
-        afterChecked = byteArr[0];
-
-        for(int i=1; i < byteArr.length; i++)
+        for(int i=0; i<msgBody.length-1; i++)
         {
-            afterChecked ^= byteArr[i];
+            temp ^= msgBody[i];
         }
-
-        return afterChecked;
+        return ChangeByte(temp);
     }
 }
