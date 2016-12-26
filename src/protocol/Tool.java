@@ -29,7 +29,7 @@ public class Tool {
         return byteValue;
     }
 
-    public static byte[] ChangeByte(byte value)
+    public static byte[] Escape(byte value)
     {
         byte[] afterChanged;
 
@@ -70,7 +70,7 @@ public class Tool {
     public static void AddLowByteToArrList(int value, ArrayList list)
     {
         byte lowBytes = IntToByte(value, IntEnum.LOW_8BIT);
-        byte[] afterChanged = ChangeByte(lowBytes);
+        byte[] afterChanged = Escape(lowBytes);
         AddBytesToArrList(afterChanged, list);
     }
 

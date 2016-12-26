@@ -2,7 +2,7 @@ package protocol;
 
 import java.util.ArrayList;
 
-import static protocol.Tool.ChangeByte;
+import static protocol.Tool.Escape;
 import static protocol.Tool.IntEnum;
 import static protocol.Tool.IntToByte;
 import static protocol.Tool.AddBytesToArrList;
@@ -72,7 +72,7 @@ public final class MsgHeader {
         for(int i=0; i<phoneNum.length; i += 2)
         {
             byteValue = ChangeTwoPhoneNumToAByte(phoneNum[i], phoneNum[i+1]);
-            afterChanged = ChangeByte(byteValue);
+            afterChanged = Escape(byteValue);
             AddBytesToArrList(afterChanged, list);
         }
     }
