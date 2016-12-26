@@ -1,9 +1,8 @@
 package protocol;
 
-import static protocol.Tool.ChangeByte;
 
 public final class CheckCode {
-    public byte[] MakeCheckedCode(byte[] msgHeader, byte[] msgBody)
+    public byte MakeCheckedCode(byte[] msgHeader, byte[] msgBody)
     {
         byte temp = msgHeader[0];
 
@@ -16,6 +15,6 @@ public final class CheckCode {
         {
             temp ^= msgBody[i];
         }
-        return ChangeByte(temp);
+        return temp;
     }
 }
