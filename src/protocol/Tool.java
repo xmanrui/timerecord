@@ -69,7 +69,7 @@ public class Tool {
         AddBytesToArrList(afterChanged, list);
     }
 
-    // 高字节放前面，低字节放后面
+    // 低字节放前面，高字节放后面
     public static void AddHighAndLowByteToArrList(int value, ArrayList list)
     {
         byte highByte = IntToByte(value, IntEnum.HIGH_8BIT);
@@ -77,8 +77,8 @@ public class Tool {
         byte[] highByteArr = ChangeByte(highByte);
         byte[] lowByteArr = ChangeByte(lowByte);
 
-        AddBytesToArrList(highByteArr, list);
         AddBytesToArrList(lowByteArr, list);
+        AddBytesToArrList(highByteArr, list);
     }
 
     public static byte[] PackageByteList(ArrayList list)
