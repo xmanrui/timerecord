@@ -2,10 +2,9 @@ package protocol;
 
 import java.util.ArrayList;
 
-import static protocol.Tool.Escape;
 import static protocol.Tool.IntEnum;
 import static protocol.Tool.IntToByte;
-import static protocol.Tool.AddBytesToArrList;
+import static protocol.Tool.AddByteToArrList;
 import static protocol.Tool.AddLowByteToArrList;
 import static protocol.Tool.AddHighAndLowByteToArrList;
 import static protocol.Tool.PackageByteList;
@@ -68,12 +67,10 @@ public final class MsgHeader {
     private void AddPhoneNumToArrList(ArrayList list)
     {
         byte byteValue = 0;
-        byte[] afterChanged;
         for(int i=0; i<phoneNum.length; i += 2)
         {
             byteValue = ChangeTwoPhoneNumToAByte(phoneNum[i], phoneNum[i+1]);
-            afterChanged = Escape(byteValue);
-            AddBytesToArrList(afterChanged, list);
+            AddByteToArrList(byteValue, list);
         }
     }
 

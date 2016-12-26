@@ -69,9 +69,8 @@ public class Tool {
 
     public static void AddLowByteToArrList(int value, ArrayList list)
     {
-        byte lowBytes = IntToByte(value, IntEnum.LOW_8BIT);
-        byte[] afterChanged = Escape(lowBytes);
-        AddBytesToArrList(afterChanged, list);
+        byte lowByte = IntToByte(value, IntEnum.LOW_8BIT);
+        AddByteToArrList(lowByte, list);
     }
 
     // 低字节放前面，高字节放后面
