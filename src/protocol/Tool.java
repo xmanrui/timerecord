@@ -62,6 +62,11 @@ public class Tool {
         }
     }
 
+    public static void AddByteToArrList(byte value, ArrayList list)
+    {
+        list.add(value);
+    }
+
     public static void AddLowByteToArrList(int value, ArrayList list)
     {
         byte lowBytes = IntToByte(value, IntEnum.LOW_8BIT);
@@ -72,13 +77,11 @@ public class Tool {
     // 低字节放前面，高字节放后面
     public static void AddHighAndLowByteToArrList(int value, ArrayList list)
     {
-        byte highByte = IntToByte(value, IntEnum.HIGH_8BIT);
         byte lowByte = IntToByte(value, IntEnum.LOW_8BIT);
-        byte[] highByteArr = ChangeByte(highByte);
-        byte[] lowByteArr = ChangeByte(lowByte);
+        byte highByte = IntToByte(value, IntEnum.HIGH_8BIT);
 
-        AddBytesToArrList(lowByteArr, list);
-        AddBytesToArrList(highByteArr, list);
+        AddByteToArrList(lowByte, list);
+        AddByteToArrList(highByte, list);
     }
 
     public static byte[] PackageByteList(ArrayList list)
