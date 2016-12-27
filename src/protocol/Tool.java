@@ -8,7 +8,7 @@ public class Tool {
         LOW_8BIT,
     }
 
-    private static byte VALUE_0X7E = 0x7e;
+    protected static byte VALUE_0X7E = 0x7e;
     private static byte VALUE_0X7D = 0x7d;
     private static byte VALUE_0X02 = 0x02;
     private static byte VALUE_0X01 = 0x01;

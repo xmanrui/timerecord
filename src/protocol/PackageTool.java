@@ -1,36 +1,43 @@
 package protocol;
 
+import java.util.ArrayList;
+import static protocol.CheckCode.MakeCheckedCode;
+import static protocol.Tool.Escape;
+import static protocol.Tool.AddBytesToArrList;
+import static protocol.Tool.VALUE_0X7E;
+
 public class PackageTool {
-    private static byte PREFIX = 0x7e;
-    private static byte SUFFIX = 0x7e;
 
-    public static byte[] PackMsg(byte[] msgHeader, byte[] msgBody, byte[] checkedCode)
+    public static byte[] PackMsg(byte[] msgHeader, byte[] msgBody)
     {
-        int msgHeaderLen = msgHeader.length;
-        int msgBodyLen = msgBody.length;
-        int checkedCodeLen = checkedCode.length;
-        int len = 1 + 1 + msgHeaderLen + msgBodyLen + checkedCodeLen;
-        byte[] afterPacked = new byte[len];
+        ArrayList list = new ArrayList();
+        list.add(VALUE_0X7E);
 
-        afterPacked[0] = PREFIX;
-        afterPacked[len-1] = SUFFIX;
+        byte[] afterEscape;
 
-        int offset = 1;
-        for(int i=0; i<msgHeaderLen-1; i++)
+        for(int i=0; i<msgHeader.length; i++)
         {
-            afterPacked[i + offset] = msgHeader[i];
+            afterEscape = Escape(msgHeader[i]);
+            AddBytesToArrList(afterEscape, list);
         }
 
-        offset = 1 + msgHeaderLen;
-        for(int i=0; i<msgBodyLen-1; i++)
+        for(int i=0; i<msgBody.length; i++)
         {
-            afterPacked[i + offset] = msgBody[i];
+            afterEscape = Escape(msgBody[i]);
+            AddBytesToArrList(afterEscape, list);
         }
 
-        offset = 1 + msgBodyLen;
-        for(int i=0; i<checkedCodeLen-1; i++)
+        byte checkCode = MakeCheckedCode(msgHeader, msgBody);
+        afterEscape = Escape(checkCode);
+        AddBytesToArrList(afterEscape, list);
+
+        list.add(VALUE_0X7E);
+
+        byte[] afterPacked = new byte[list.size()];
+
+        for(int i=0; i<list.size(); i++)
         {
-            afterPacked[i + offset] = checkedCode[i];
+            afterPacked[i] = (byte)list.get(i);
         }
 
         return afterPacked;
