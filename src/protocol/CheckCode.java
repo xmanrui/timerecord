@@ -2,7 +2,7 @@ package protocol;
 
 
 public final class CheckCode {
-    public byte MakeCheckedCode(byte[] msgHeader, byte[] msgBody)
+    public static byte MakeCheckedCode(byte[] msgHeader, byte[] msgBody)
     {
         byte temp = msgHeader[0];
 
