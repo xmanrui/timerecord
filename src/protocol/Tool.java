@@ -73,6 +73,14 @@ public class Tool {
         AddByteToArrList(lowByte, list);
     }
 
+    public static void AddLowBytesToArrList(int[] value, ArrayList list)
+    {
+        for(int i: value)
+        {
+            AddLowByteToArrList(i, list);
+        }
+    }
+
     // 低字节放前面，高字节放后面
     public static void AddHighAndLowByteToArrList(int value, ArrayList list)
     {
@@ -81,6 +89,14 @@ public class Tool {
 
         AddByteToArrList(lowByte, list);
         AddByteToArrList(highByte, list);
+    }
+
+    public static void AddHighAndLowBytesToArrList(int[] value, ArrayList list)
+    {
+        for(int i: value)
+        {
+            AddHighAndLowByteToArrList(i, list);
+        }
     }
 
     public static byte[] PackageByteList(ArrayList list)
@@ -93,6 +109,20 @@ public class Tool {
         }
 
         return packgeBytes;
+    }
+
+    public static byte[] StrChangeToBytes(String str)
+    {
+        byte[] originalBytes = str.getBytes(); // ? gbk或utf-8字符集
+        byte[] afterChangedBytes = new byte[originalBytes.length + 1];
+        for(int i=0; i<originalBytes.length; i++)
+        {
+            afterChangedBytes[i] = originalBytes[i];
+        }
+
+        afterChangedBytes[afterChangedBytes.length + 1] = 0; // 最后一个位置填0
+
+        return afterChangedBytes;
     }
 }
 
