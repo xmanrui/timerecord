@@ -124,5 +124,15 @@ public class Tool {
 
         return afterChangedBytes;
     }
+
+    public static byte[] LongToBytes(long value)
+    {
+        byte[] afterChanged = new byte[4];
+        afterChanged[0] = (byte)(value & 0xFF);
+        afterChanged[1] = (byte)((value >> 8) & 0xFF);
+        afterChanged[2] = (byte)((value >> 16) & 0xFF);
+        afterChanged[3] = (byte)((value >> 24) & 0xFF);
+        return afterChanged;
+    }
 }
 
