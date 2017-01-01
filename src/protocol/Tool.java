@@ -111,7 +111,7 @@ public class Tool {
         return packgeBytes;
     }
 
-    public static byte[] StrChangeToBytes(String str)
+    public static byte[] StrToBytes(String str)
     {
         byte[] originalBytes = str.getBytes(); // ? gbk或utf-8字符集
         byte[] afterChangedBytes = new byte[originalBytes.length + 1];
