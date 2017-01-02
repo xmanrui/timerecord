@@ -2,7 +2,7 @@ package protocol;
 
 import java.util.ArrayList;
 import static protocol.Tool.*;
-import static protocol.Tool.StrChangeToBytes;
+import static protocol.Tool.StrToBytes;
 
 public abstract class MsgBody {
     public int msgID = 0;
@@ -124,7 +124,7 @@ class ClientRegisterMsgBody extends MsgBody
         AddLowBytesToArrList(serialNumber, msgBodyBytesList);
         AddLowBytesToArrList(IMEI, msgBodyBytesList);
         AddLowByteToArrList(carColor, msgBodyBytesList);
-        AddBytesToArrList(StrChangeToBytes(carID), msgBodyBytesList);
+        AddBytesToArrList(StrToBytes(carID), msgBodyBytesList);
     }
 }
 
@@ -150,7 +150,7 @@ class ClientRegisterAckMsgBody extends MsgBody
         AddLowBytesToArrList(platformID, msgBodyBytesList);
         AddLowBytesToArrList(trainingInstitutionsID, msgBodyBytesList);
         AddLowBytesToArrList(timeClientID, msgBodyBytesList);
-        AddBytesToArrList(StrChangeToBytes(clientCertificate), msgBodyBytesList);
+        AddBytesToArrList(StrToBytes(clientCertificate), msgBodyBytesList);
     }
 }
 
@@ -166,4 +166,59 @@ class ClientLogoutMsgBody extends MsgBody
         msgBodyBytesList.clear();
     }
 }
+
+class ClientAuthMsgBody extends MsgBody
+{
+    long timestamp = 0;
+    String authCiphertext = "";
+
+    public ClientAuthMsgBody()
+    {
+        super(0x0102);
+    }
+
+    public void MakeMsgBodyByteList()
+    {
+        msgBodyBytesList.clear();
+
+        AddBytesToArrList(LongToBytes(timestamp), msgBodyBytesList);
+        AddBytesToArrList(StrToBytes(authCiphertext), msgBodyBytesList);
+    }
+}
+
+class PlatformLoginRequestMsgBody extends MsgBody
+{
+   int[] platformID = new int[5];
+   int[] passwd = new int[8];
+   long platformAccessCode = 0;
+    public PlatformLoginRequestMsgBody()
+    {
+        super(0x01F0);
+    }
+
+    public void MakeMsgBodyByteList()
+    {
+        msgBodyBytesList.clear();
+
+        AddLowBytesToArrList(platformID, msgBodyBytesList);
+        AddLowBytesToArrList(passwd, msgBodyBytesList);
+        AddBytesToArrList(LongToBytes(platformAccessCode), msgBodyBytesList);
+    }
+}
+
+class PlatformLoginAckMsgBody extends MsgBody
+{
+    int ackResult = 0;
+    public PlatformLoginAckMsgBody()
+    {
+        super(0x81F0);
+    }
+
+    public void MakeMsgBodyByteList()
+    {
+        msgBodyBytesList.clear();
+        AddLowByteToArrList(ackResult, msgBodyBytesList);
+    }
+}
+
 
