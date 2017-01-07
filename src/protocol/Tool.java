@@ -134,5 +134,31 @@ public class Tool {
         afterChanged[3] = (byte)((value >> 24) & 0xFF);
         return afterChanged;
     }
+
+    public class CycleByteArray
+    {
+        private byte[] data;
+        private  int startIndex = 0;
+        private  int endIndex = 0;
+        private  int currentIndex = -1;
+        private  int len = 1024 * 1024 * 10; // 10MB
+
+        public CycleByteArray()
+        {
+            data = new byte[len];
+
+            for(int i=0; i<len; i++)
+            {
+                data[i] = 0;
+            }
+
+        }
+
+        public void push(byte value)
+        {
+            currentIndex++;
+            data[currentIndex] = value;
+        }
+    }
 }
 
