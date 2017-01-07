@@ -24,6 +24,8 @@ public class socketServer {
                 socket = server.accept();
                 System.out.println("连接客户端地址：" + socket.getRemoteSocketAddress());
 
+
+
                 // 装饰流BufferedReader封装输入流（接收客户端的流）
                 BufferedInputStream bis = new BufferedInputStream(
                         socket.getInputStream());
@@ -33,8 +35,15 @@ public class socketServer {
                 String ret = "";
                 while (dis.read(bytes) != -1) {
                     ret += bytesToHexString(bytes) + " ";
+                    doSomething(ret);
+
+                    byte[] testByte = {0x03, 0x02, 0x01};
+                    DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
+                    dos.write(testByte);
+                    dos.flush();
+
                     if (dis.available() == 0) { //一个请求
-                        doSomething(ret);
+
                     }
                 }
 
