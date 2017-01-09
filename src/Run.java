@@ -4,24 +4,46 @@ import java.util.ArrayList;
  * Created by pc on 2016/12/20.
  */
 public class Run {
+    public static void testfun(ArrayList aList)
+    {
+
+        testfun2(aList);
+    }
+
+    public static void testfun2(ArrayList aList)
+    {
+        for (int i=0; i<10; i++)
+        {
+            byte t = (byte)i;
+            aList.add(t);
+        }
+    }
     public static void main(String[] args) {
     System.out.println("xmryxx");
-    int a = 1;
-    int b =  (1024 >>9);
+    int b =  (1024 >> 9);
         System.out.println(b);
 
         ArrayList lt = new ArrayList();
-        for (int i=0; i<17; i++)
-        {
-            byte t = (byte)i;
-            lt.add(t);
-        }
+        lt.add((byte)101);
+        testfun(lt);
+
+        lt.add(0, (byte)111);
 
         for (int i=0; i<lt.size(); i++)
         {
             byte aaa= (byte)lt.get(i);
             System.out.println(aaa);
         }
+
+        byte[] atest = new byte[0];
+        System.out.println(atest.length);
+
+        String strTest = new String("ffdfd");
+        byte[] bTest = strTest.getBytes();
+        System.out.println(bTest.length);
+        byte aaaa = (byte)127;
+        int aaa = (int)(aaaa & 0x000000FF);
+        System.out.println(aaa);
 
     }
 }
