@@ -8,6 +8,12 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.*;
+
+import protocol.Tool.AcceptByteArry;
+import protocol.Tool.SendData;
 
 public class socketClient {
 
@@ -17,19 +23,32 @@ public class socketClient {
     AcceptThread acceptTh;
     public class SendThread extends Thread {
         private Socket socketObj;
+        private Vector<SendData> sendeVector = new Vector<>(); // Vector是线程安全的
+
         public  SendThread(Socket obj)
         {
             socketObj = obj;
+        }
+        public void AddSendData(SendData obj)
+        {
+            sendeVector.add(obj);
         }
         public void run()
         {
             while(true)
             {
+                if(sendeVector.isEmpty())
+                {
+                    continue;
+                }
+
                 try{
-                    byte[] bytes = {0x03, 0x02, 0x01};
+                    int dataIndex = sendeVector.size() - 1;
+                    SendData data = sendeVector.get(dataIndex);
                     DataOutputStream dos = new DataOutputStream(socketObj.getOutputStream());
-                    dos.write(bytes);
+                    dos.write(data.msgPackage);
                     dos.flush();
+                    sendeVector.remove(dataIndex);
                 } catch (IOException e) {
                     e.printStackTrace();
                     break;
@@ -41,6 +60,8 @@ public class socketClient {
 
     public class AcceptThread extends Thread {
         private Socket socketObj;
+        private AcceptByteArry acceptBytesObj;
+        private byte[] acceptedData;
         public AcceptThread(Socket obj)
         {
             socketObj = obj;
@@ -50,15 +71,15 @@ public class socketClient {
             while(true)
             {
                 try{
-                    // 装饰流BufferedReader封装输入流（接收客户端的流）
                     BufferedInputStream bis = new BufferedInputStream(
                             socket.getInputStream());
 
                     DataInputStream dis = new DataInputStream(bis);
                     byte[] bytes = new byte[1]; // 一次读取一个byte
-                    String ret = "";
+
                     while (dis.read(bytes) != -1) {
-                        System.out.println(bytes[0]);
+                        System.out.println(bytes[0]); // for test
+                        acceptedData = acceptBytesObj.push(bytes[0]);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -80,24 +101,19 @@ public class socketClient {
 
     }
 
-    public void TestSend()
+    public void DoingSend()
     {
         sendTh = new SendThread(socket);
         sendTh.start();
     }
 
-    public void TestAccept()
+    public void DoingAccept()
     {
         acceptTh = new AcceptThread(socket);
         acceptTh.start();
     }
 
-    public SendThread SendThJoin()
-    {
-        return sendTh;
-    }
-
-    public void talk() {
+    public void Test() {
         try {
             DataInputStream input = new DataInputStream(socket.getInputStream());
 
@@ -125,8 +141,8 @@ public class socketClient {
 
     public static void main(String[] args) {
         socketClient client = new socketClient();
-        client.TestSend();
-        client.TestAccept();
+        client.DoingSend();
+        client.DoingAccept();
     }
 
 }
