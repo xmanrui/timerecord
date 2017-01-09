@@ -1,6 +1,7 @@
 package protocol;
 
 import java.util.ArrayList;
+import static protocol.CheckCode.*;
 
 public class Tool {
     enum IntEnum{
@@ -111,6 +112,11 @@ public class Tool {
         return packgeBytes;
     }
 
+    public static int ByteToInt(byte value)
+    {
+        return value & 0x000000FF;
+    }
+
     public static byte[] StrToBytes(String str)
     {
         byte[] originalBytes = str.getBytes(); // ? gbk或utf-8字符集
@@ -135,29 +141,131 @@ public class Tool {
         return afterChanged;
     }
 
-    public class CycleByteArray
+    public class AcceptByteArry
     {
         private byte[] data;
-        private  int startIndex = 0;
-        private  int endIndex = 0;
-        private  int currentIndex = -1;
+        private  int start = 0;
+        private  int end = 0;
         private  int len = 1024 * 1024 * 10; // 10MB
+        private int currentIndex = 0;
 
-        public CycleByteArray()
+        public AcceptByteArry()
         {
             data = new byte[len];
 
+            DataClear();
+        }
+
+        private void DataClear()
+        {
             for(int i=0; i<len; i++)
             {
                 data[i] = 0;
             }
-
         }
 
-        public void push(byte value)
+        private boolean IsValidSubpackage(byte[] arr)
         {
-            currentIndex++;
+            boolean isValid = false;
+
+            if(arr.length < 10) // 一个包数据不可能小于10的
+            {
+               return false;
+            }
+
+            byte checkedCode = arr[1];
+            for (int i=2; i<arr.length-2; i++)
+            {
+                checkedCode ^= arr[i];
+            }
+
+            if(checkedCode == arr[arr.length-2])
+            {
+                isValid = true;
+            }
+
+            return isValid;
+        }
+
+        public byte[] push(byte value)
+        {
+
             data[currentIndex] = value;
+            currentIndex++;
+
+            if (currentIndex < 10) // 一个包数据不可能小于10的
+            {
+                return new byte[0];
+            }
+
+            int subpackageHead = -1;
+            int subpackageTail = -1;
+            boolean hasPackage = false;
+            byte[] subpackage;
+
+            for(int i=0; i<currentIndex; i++)
+            {
+                if ((data[i] == VALUE_0X7E) && (data[i+1] == VALUE_0X7E))
+                {
+                    data[i] = 0;
+                }
+
+                if (data[i] == VALUE_0X7E)
+                {
+                    subpackageHead = i;
+                }
+
+                if((data[i] == VALUE_0X7E) && (subpackageHead != i))
+                {
+                    subpackageTail = i;
+                    hasPackage = true;
+                }
+            }
+
+            if(hasPackage)
+            {
+                int subpackageLen = subpackageTail - subpackageHead;
+                subpackage = new byte[subpackageLen];
+
+                for(int i= subpackageHead; i<subpackageTail+1; i++)
+                {
+                    subpackage[i - subpackageHead] = data[i];
+                }
+
+                if(IsValidSubpackage(subpackage))
+                {
+                    DataClear();
+                    currentIndex = 0;
+                }
+                else // 无效包把包的标记留下
+                {
+                    DataClear();
+                    data[0] = VALUE_0X7E;
+                    currentIndex = 1;
+                    return new byte[0];
+                }
+            }
+            else
+            {
+                subpackage = new byte[0];
+            }
+
+
+            return subpackage;
+        }
+    }
+
+    public class SendData
+    {
+        public int count = 0;
+        public byte[] msgPackage;
+        public byte[] msgHeader;
+        public long nextTime = 0;
+        public long currentTime = 0;
+        public SendData(byte[] msgHeader, byte[] msgPackage)
+        {
+            this.msgHeader = msgHeader.clone();
+            this.msgPackage = msgPackage.clone();
         }
     }
 }
