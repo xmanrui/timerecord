@@ -68,17 +68,33 @@ public class socketClient {
         {
             while(true)
             {
-                try{
+                try {
                     BufferedInputStream bis = new BufferedInputStream(
                             socket.getInputStream());
 
                     DataInputStream dis = new DataInputStream(bis);
                     byte[] bytes = new byte[1]; // 一次读取一个byte
 
+                    boolean hasData = false;
+
                     while (dis.read(bytes) != -1) {
                         System.out.println(bytes[0]); // for test
                         acceptedData = acceptBytesObj.push(bytes[0]);
+                        hasData = true;
                     }
+
+                    if (hasData)
+                    {
+                        try
+                        {
+                            sleep(500);
+                        }
+                        catch (InterruptedException e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+
                 } catch (IOException e) {
                     e.printStackTrace();
                     break;
