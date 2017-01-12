@@ -164,6 +164,18 @@ public class Tool {
             }
         }
 
+        private void DataClear(int startIndex)
+        {
+            if (startIndex<0)
+            {
+                return;
+            }
+            for(int i=startIndex; i<len; i++)
+            {
+                data[i] = 0;
+            }
+        }
+
         private boolean IsValidSubpackage(byte[] arr)
         {
             boolean isValid = false;
@@ -185,6 +197,90 @@ public class Tool {
             }
 
             return isValid;
+        }
+
+        public byte[] push(byte[] arr)
+        {
+            for(int i=0; i<arr.length; i++)
+            {
+                data[currentIndex] = arr[i];
+                currentIndex++;
+            }
+
+            if (currentIndex < 10) // 一个包数据不可能小于10的
+            {
+                return new byte[0];
+            }
+
+            int subpackageHead = -1;
+            int subpackageTail = -1;
+            boolean hasPackage = false;
+            byte[] subpackage;
+
+            for(int i=0; i<currentIndex; i++)
+            {
+                if ((data[i] == VALUE_0X7E) && (data[i+1] == VALUE_0X7E))
+                {
+                    data[i] = 0;
+                }
+
+                if (data[i] == VALUE_0X7E)
+                {
+                    subpackageHead = i;
+                }
+
+                if((data[i] == VALUE_0X7E) && (subpackageHead != i))
+                {
+                    subpackageTail = i;
+                    hasPackage = true;
+                }
+            }
+
+            if (hasPackage)
+            {
+                int subpackageLen = subpackageTail - subpackageHead;
+                subpackage = new byte[subpackageLen];
+
+                for(int i= subpackageHead; i<subpackageTail+1; i++)
+                {
+                    subpackage[i - subpackageHead] = data[i];
+                }
+
+                if(IsValidSubpackage(subpackage))
+                {
+                    int copyLen = currentIndex - subpackageTail - 1;
+                    for (int i=0; i<copyLen; i++)
+                    {
+                        data[i] = data[subpackageTail + i + 1];
+                    }
+
+                    DataClear(copyLen);
+                    currentIndex = copyLen;
+                }
+                else
+                {
+                    data[0] = VALUE_0X7E;// 无效包把包的标记留下
+                    int copyLen = currentIndex - subpackageTail - 1;
+                    int offset = 1;
+
+                    for (int i=offset; i<copyLen; i++)
+                    {
+                        data[i] = data[subpackageTail + i + 1];
+                    }
+
+                    int startIndex = copyLen + offset;
+                    DataClear(startIndex);
+                    currentIndex = startIndex;
+
+                    return new byte[0];
+                }
+            }
+            else
+            {
+                subpackage = new byte[0];
+            }
+
+            return subpackage;
         }
 
         public byte[] push(byte value)
